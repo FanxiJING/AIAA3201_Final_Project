@@ -1,4 +1,4 @@
-# ── Conda / pip caches ────────────────────────────────────────────────────────
+# ── Conda / pip / torch caches ────────────────────────────────────────────────
 conda_envs/
 conda_pkgs/
 pip_cache/
@@ -9,11 +9,13 @@ huggingface_cache/
 tmp/
 lxy/
 project4/
+hello_world.txt
+report.html
 
 # ── Raw datasets (too large — see README for download links) ──────────────────
 data/
 
-# ── Third-party tool binaries (not your code) ────────────────────────────────
+# ── Third-party tool directories (not your code) ─────────────────────────────
 workplace/colmap/
 workplace/test_gs/
 
@@ -23,14 +25,37 @@ workplace/weights/*.pt
 workplace/weights/*.bin
 workplace/weights/*.safetensors
 
-# ── 3DGS trained model outputs (large binary files) ──────────────────────────
-# Keep: metrics JSON, CSV tables, PNG figures
-# Exclude: point clouds, renders, ground-truth images, mesh files
+# ── 3DGS large binary outputs ────────────────────────────────────────────────
 workplace/output/**/point_cloud/
-workplace/output/**/renders/
-workplace/output/**/gt/
 workplace/output/**/*.ply
 workplace/output/**/*.splat
+
+# ── Render directories (large images — PNG figures are force-added below) ─────
+workplace/output/**/renders/
+workplace/output/**/gt/
+
+# ── DUSt3R init dirs (contain large COLMAP binary files) ─────────────────────
+workplace/output/**/dust3r_init/
+
+# ── COLMAP sparse binary dirs inside output ───────────────────────────────────
+workplace/output/**/sparse/
+
+# ── Symlinked image directories inside output (point to raw data) ─────────────
+workplace/output/**/images
+
+# ── NumPy pose files (reproducible by re-running scripts) ────────────────────
+workplace/output/**/*.npy
+
+# ── TensorBoard event logs ────────────────────────────────────────────────────
+events.out.tfevents.*
+
+# ── 3DGS config args ──────────────────────────────────────────────────────────
+cfg_args
+
+# ── Video files ───────────────────────────────────────────────────────────────
+*.mp4
+*.avi
+*.mov
 
 # ── Python build artifacts ────────────────────────────────────────────────────
 __pycache__/
@@ -39,7 +64,6 @@ __pycache__/
 *.egg-info/
 dist/
 build/
-.eggs/
 
 # ── Editor / OS ───────────────────────────────────────────────────────────────
 .vscode/
@@ -47,30 +71,3 @@ build/
 *.swp
 .DS_Store
 Thumbs.db
-
-# ── TensorBoard event files (large, not needed for reproduction) ──────────────
-events.out.tfevents.*
-
-# ── 3DGS config args files ────────────────────────────────────────────────────
-cfg_args
-
-# ── Symlinked image directories inside output (point to raw data) ─────────────
-workplace/output/**/images
-
-# ── COLMAP sparse binary dirs inside output ───────────────────────────────────
-workplace/output/**/sparse/
-
-# ── NumPy pose files (large, reproducible by re-running) ─────────────────────
-workplace/output/**/*.npy
-
-# ── Video files ───────────────────────────────────────────────────────────────
-*.mp4
-*.avi
-*.mov
-
-# ── DUSt3R init dirs (contain large binary COLMAP files) ─────────────────────
-workplace/output/**/dust3r_init/
-
-# ── Scratch files ─────────────────────────────────────────────────────────────
-hello_world.txt
-report.html
