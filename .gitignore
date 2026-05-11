@@ -47,3 +47,30 @@ build/
 *.swp
 .DS_Store
 Thumbs.db
+
+# ── TensorBoard event files (large, not needed for reproduction) ──────────────
+events.out.tfevents.*
+
+# ── 3DGS config args files ────────────────────────────────────────────────────
+cfg_args
+
+# ── Symlinked image directories inside output (point to raw data) ─────────────
+workplace/output/**/images
+
+# ── COLMAP sparse binary dirs inside output ───────────────────────────────────
+workplace/output/**/sparse/
+
+# ── NumPy pose files (large, reproducible by re-running) ─────────────────────
+workplace/output/**/*.npy
+
+# ── Video files ───────────────────────────────────────────────────────────────
+*.mp4
+*.avi
+*.mov
+
+# ── DUSt3R init dirs (contain large binary COLMAP files) ─────────────────────
+workplace/output/**/dust3r_init/
+
+# ── Scratch files ─────────────────────────────────────────────────────────────
+hello_world.txt
+report.html
