@@ -1,0 +1,56 @@
+{
+  "waymo_reggs": {
+    "dataset": "waymo",
+    "method": "reggs",
+    "PSNR": 13.751,
+    "SSIM": 0.4631,
+    "N": 3,
+    "split": "test",
+    "ATE_RMSE": 0.2953
+  },
+  "waymo_instantsplat": {
+    "dataset": "waymo",
+    "method": "instantsplat",
+    "PSNR": 14.592,
+    "SSIM": 0.4813,
+    "N": 3,
+    "split": "test",
+    "ATE_RMSE": 0.2917
+  },
+  "dl3dv_reggs": {
+    "dataset": "dl3dv",
+    "method": "reggs",
+    "PSNR": 8.085,
+    "SSIM": 0.1406,
+    "N": 2,
+    "split": "test",
+    "ATE_RMSE": 0.8099
+  },
+  "dl3dv_instantsplat": {
+    "dataset": "dl3dv",
+    "method": "instantsplat",
+    "PSNR": 11.299,
+    "SSIM": 0.2252,
+    "N": 2,
+    "split": "test",
+    "ATE_RMSE": 0.8092
+  },
+  "re10k_reggs": {
+    "dataset": "re10k",
+    "method": "reggs",
+    "PSNR": 8.986,
+    "SSIM": 0.1807,
+    "N": 2,
+    "split": "test",
+    "ATE_RMSE": 1.9083
+  },
+  "re10k_instantsplat": {
+    "dataset": "re10k",
+    "method": "instantsplat",
+    "PSNR": 9.412,
+    "SSIM": 0.22,
+    "N": 2,
+    "split": "test",
+    "ATE_RMSE": 1.9138
+  }
+}

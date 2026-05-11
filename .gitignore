@@ -1,0 +1,49 @@
+# ── Conda / pip caches ────────────────────────────────────────────────────────
+conda_envs/
+conda_pkgs/
+pip_cache/
+torch_cache/
+huggingface_cache/
+
+# ── Scratch / personal ────────────────────────────────────────────────────────
+tmp/
+lxy/
+project4/
+
+# ── Raw datasets (too large — see README for download links) ──────────────────
+data/
+
+# ── Third-party tool binaries (not your code) ────────────────────────────────
+workplace/colmap/
+workplace/test_gs/
+
+# ── Large model weight files ──────────────────────────────────────────────────
+workplace/weights/*.pth
+workplace/weights/*.pt
+workplace/weights/*.bin
+workplace/weights/*.safetensors
+
+# ── 3DGS trained model outputs (large binary files) ──────────────────────────
+# Keep: metrics JSON, CSV tables, PNG figures
+# Exclude: point clouds, renders, ground-truth images, mesh files
+workplace/output/**/point_cloud/
+workplace/output/**/renders/
+workplace/output/**/gt/
+workplace/output/**/*.ply
+workplace/output/**/*.splat
+
+# ── Python build artifacts ────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ── Editor / OS ───────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db

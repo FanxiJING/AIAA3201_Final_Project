@@ -1,0 +1,4 @@
+Dataset,Sparse ratio,P1 PSNR (dense),P1 SSIM (dense),P2 PSNR (sparse),P2 SSIM (sparse),ATE RMSE (m),ΔPSNR (P2-P1),Eval split
+waymo,1/10 (19 frames),39.992,0.9627,14.556,0.489,0.2914,-25.436,test
+dl3dv,1/30 (10 frames),32.774,0.97,11.317,0.2219,0.8092,-21.457,test
+re10k,1/30 (9 frames),36.359,0.9892,9.393,0.2181,1.9138,-26.966,test

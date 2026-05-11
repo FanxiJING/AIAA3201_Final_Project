@@ -1,0 +1,9 @@
+{
+  "dataset": "waymo",
+  "method": "instantsplat",
+  "PSNR": 14.592,
+  "SSIM": 0.4813,
+  "N": 3,
+  "split": "test",
+  "ATE_RMSE": 0.2917
+}

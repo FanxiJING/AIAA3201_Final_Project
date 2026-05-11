@@ -1,0 +1,8 @@
+{
+  "dataset": "dl3dv",
+  "PSNR": 11.317,
+  "SSIM": 0.2219,
+  "N": 2,
+  "split": "test",
+  "ATE_RMSE": 0.8092
+}

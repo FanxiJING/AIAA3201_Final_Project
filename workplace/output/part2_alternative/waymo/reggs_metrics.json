@@ -1,0 +1,9 @@
+{
+  "dataset": "waymo",
+  "method": "reggs",
+  "PSNR": 13.751,
+  "SSIM": 0.4631,
+  "N": 3,
+  "split": "test",
+  "ATE_RMSE": 0.2953
+}

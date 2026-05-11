@@ -1,0 +1,9 @@
+{
+  "dataset": "dl3dv",
+  "method": "reggs",
+  "PSNR": 8.085,
+  "SSIM": 0.1406,
+  "N": 2,
+  "split": "test",
+  "ATE_RMSE": 0.8099
+}

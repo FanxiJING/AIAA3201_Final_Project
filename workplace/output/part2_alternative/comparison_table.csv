@@ -1,0 +1,10 @@
+Dataset,Sparsity,Method,PSNR,SSIM,ATE (m)
+waymo,1/10 (19 fr.),DUSt3R-only (baseline),14.556,0.4890,0.2914
+,,reggs (ours),13.751,0.4631,0.2953
+,,instantsplat (ours),14.592,0.4813,0.2917
+dl3dv,1/30 (10 fr.),DUSt3R-only (baseline),11.317,0.2219,0.8092
+,,reggs (ours),8.085,0.1406,0.8099
+,,instantsplat (ours),11.299,0.2252,0.8092
+re10k,1/30 (9 fr.),DUSt3R-only (baseline),9.393,0.2181,1.9138
+,,reggs (ours),8.986,0.1807,1.9083
+,,instantsplat (ours),9.412,0.2200,1.9138

@@ -1,0 +1,8 @@
+{
+  "dataset": "waymo",
+  "PSNR": 14.556,
+  "SSIM": 0.489,
+  "N": 3,
+  "split": "test",
+  "ATE_RMSE": 0.2914
+}

@@ -1,0 +1,32 @@
+{
+  "waymo_planA": {
+    "PSNR": 39.992,
+    "SSIM": 0.9627,
+    "N": 43
+  },
+  "waymo_planB": {
+    "PSNR": 24.869,
+    "SSIM": 0.7958,
+    "N": 43
+  },
+  "dl3dv_planA": {
+    "PSNR": 32.774,
+    "SSIM": 0.97,
+    "N": 43
+  },
+  "dl3dv_planB": {
+    "PSNR": 29.018,
+    "SSIM": 0.916,
+    "N": 43
+  },
+  "re10k_planA": {
+    "PSNR": 36.359,
+    "SSIM": 0.9892,
+    "N": 43
+  },
+  "re10k_planB": {
+    "PSNR": 33.365,
+    "SSIM": 0.9826,
+    "N": 43
+  }
+}

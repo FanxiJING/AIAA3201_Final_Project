@@ -1,0 +1,9 @@
+{
+  "dataset": "re10k",
+  "method": "instantsplat",
+  "PSNR": 9.412,
+  "SSIM": 0.22,
+  "N": 2,
+  "split": "test",
+  "ATE_RMSE": 1.9138
+}

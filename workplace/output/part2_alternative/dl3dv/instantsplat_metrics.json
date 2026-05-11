@@ -1,0 +1,9 @@
+{
+  "dataset": "dl3dv",
+  "method": "instantsplat",
+  "PSNR": 11.299,
+  "SSIM": 0.2252,
+  "N": 2,
+  "split": "test",
+  "ATE_RMSE": 0.8092
+}

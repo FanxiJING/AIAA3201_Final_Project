@@ -1,0 +1,8 @@
+{
+  "dataset": "re10k",
+  "PSNR": 9.393,
+  "SSIM": 0.2181,
+  "N": 2,
+  "split": "test",
+  "ATE_RMSE": 1.9138
+}

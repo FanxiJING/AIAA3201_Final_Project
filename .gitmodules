@@ -1,0 +1,12 @@
+[submodule "workplace/dust3r"]
+	path = workplace/dust3r
+	url = https://github.com/naver/dust3r
+[submodule "workplace/gaussian-splatting"]
+	path = workplace/gaussian-splatting
+	url = https://github.com/graphdeco-inria/gaussian-splatting
+[submodule "workplace/RegGS"]
+	path = workplace/RegGS
+	url = https://github.com/chengchong01/RegGS
+[submodule "workplace/vggt"]
+	path = workplace/vggt
+	url = https://github.com/facebookresearch/vggt
