@@ -14,23 +14,25 @@
 5. [Data Preparation](#data-preparation)
 6. [Part 1: High-Fidelity Reconstruction](#part-1-high-fidelity-reconstruction)
 7. [Part 2: Unposed Sparse Reconstruction](#part-2-unposed-sparse-reconstruction)
-8. [Output Structure](#output-structure)
-9. [Key Findings](#key-findings)
-10. [Troubleshooting](#troubleshooting)
-11. [Citation](#citation)
+8. [Part 3: Generative Enhancement](#part-3-generative-enhancement)
+9. [Output Structure](#output-structure)
+10. [Key Findings](#key-findings)
+11. [Troubleshooting](#troubleshooting)
+12. [Citation](#citation)
 
 ---
 
 ## Overview
 
-This project reconstructs 3D scenes using **3D Gaussian Splatting (3DGS)** under two conditions:
+This project reconstructs 3D scenes using 3D Gaussian Splatting (3DGS) under three conditions:
 
 | Part | Condition | Poses | Frames | Method |
 |------|-----------|-------|--------|--------|
-| **Part 1** | Dense | ✅ Known (COLMAP or DUSt3R) | ~50 | Plan A: COLMAP → 3DGS · Plan B: DUSt3R → 3DGS |
-| **Part 2** | Sparse | ❌ Unknown | 9–19 | DUSt3R-only · InstantSplat-style · RegGS-style |
+| **Part 1** | Dense | Known (COLMAP or DUSt3R) | ~50 | Plan A: COLMAP -> 3DGS · Plan B: DUSt3R -> 3DGS |
+| **Part 2** | Sparse | Unknown | 9-19 | DUSt3R-only · InstantSplat-style · RegGS-style |
+| **Part 3** | Sparse + Generative | Unknown | 9-19 + pseudo | InstantSplat + DIFIX3D+ pseudo-views |
 
-**Datasets:** Waymo-405841 (outdoor), DL3DV-2 (outdoor), Re10k-1 (indoor).
+**Datasets:** Waymo-405841 (outdoor), DL3DV-2 (outdoor), Re10k-1 (indoor/outdoor).
 
 ---
 
@@ -73,9 +75,13 @@ project4/
 │
 ├── setup_dust3r_env.sh        # One-time environment + dependency setup
 │
-├── part1_linux.py             # Part 1: COLMAP vs. DUSt3R → 3DGS
+├── part1_linux.py             # Part 1: COLMAP vs. DUSt3R -> 3DGS
 ├── part2_original_data.py     # Part 2: DUSt3R-only sparse reconstruction
 ├── part2_alternative.py       # Part 2: InstantSplat & RegGS-style variants
+│
+├── part3_step1_render_intermediate.py   # Part 3: Pose interpolation + rendering
+├── part3_step2_difix3d.py              # Part 3: DIFIX3D+ enhancement
+├── part3_step3_rerun.py                # Part 3: Hybrid training with pseudo-views
 │
 └── (generated at runtime)
     ├── data/                  # COLMAP-processed dense datasets
@@ -91,7 +97,8 @@ project4/
         └── output/
             ├── part1/          # Part 1 results
             ├── part2_original/ # Part 2 DUSt3R-only results
-            └── part2_alternative/ # Part 2 InstantSplat + RegGS results
+            ├── part2_alternative/ # Part 2 InstantSplat + RegGS results
+            └── part3_enhanced/    # Part 3 generative enhancement results
 ```
 
 ---
@@ -451,6 +458,32 @@ workplace/output/part2_alternative/
     figures/
         {dataset}_trajectory_compare.png   # side-by-side trajectory plots
 ```
+---
+
+## Part 3: Generative Enhancement
+
+**Scripts:** `part3_step1_render_intermediate.py`, `part3_step2_difix3d.py`, `part3_step3_rerun.py`
+
+Explores whether diffusion-generated pseudo-views can improve unposed sparse reconstruction by augmenting the training set with intermediate views. This experiment builds on the optimal configuration from Part 2 (InstantSplat) and applies DIFIX3D+ — a single-step diffusion model fine-tuned for removing 3D reconstruction artifacts.
+
+### 3.1 Methodology
+
+The pipeline consists of three sequential steps, each implemented in a separate script.
+
+#### Step 1 — Intermediate Pose Rendering (`part3_step1_render_intermediate.py`)
+
+Given sparse camera poses recovered by DUSt3R in Part 2 (9–11 frames per scene), this script generates intermediate camera poses between consecutive real frames using spherical linear interpolation (SLERP) for rotation and linear interpolation for translation. For each interval between two real frames, we generate K = 2 intermediate poses, yielding approximately 18–20 pseudo-views per scene.
+
+For each interpolated pose, the script renders a novel view using the 3DGS model trained in Part 2 (InstantSplat). These renders typically contain floating artifacts, blurring, and incomplete geometry due to insufficient multi-view constraints. The rendered images are saved to `intermediate_renders/` directory.
+
+#### Step 2 — DIFIX3D+ Enhancement (`part3_step2_difix3d.py`)
+
+This script applies DIFIX3D+ [Wu et al., CVPR 2025], a single-step diffusion model built on SD-Turbo, to enhance the rendered views. For each rendered image, the model takes the degraded render and the nearest real frame as reference, and outputs an enhanced pseudo-view in a single denoising step. The enhanced images are saved to `pseudo_views/` directory with confidence scores stored as separate `.npy` files.
+
+#### Step 3 — Hybrid Training (`part3_step3_rerun.py`)
+
+This script concatenates the generated pseudo-views with the original real images to form an augmented training set, then re-runs the complete Part 2 pipeline (DUSt3R + 3DGS) on this augmented dataset. The output is saved to a separate directory (`part3_alternative/`) to avoid overwriting Part 2 results.
+
 
 ---
 
@@ -489,17 +522,43 @@ workplace/
     │       └── re10k_trajectory.png
     │
     └── part2_alternative/
-        ├── waymo/
+    |   │   ├── waymo/
+    │   │   ├── instantsplat/
+    │   │   └── reggs/
+    │   ├── dl3dv/ ...
+    │   ├── re10k/ ...
+    │   ├── comparison_table.csv
+    │   ├── all_results.json
+    │   └── figures/
+    │       ├── waymo_trajectory_compare.png
+    │       ├── dl3dv_trajectory_compare.png
+    │       └── re10k_trajectory_compare.png
+    │
+    └── part3_enhanced/
+        ├── dl3dv/
         │   ├── instantsplat/
-        │   └── reggs/
-        ├── dl3dv/ ...
+        │   │   ├── intermediate_renders/
+        │   │   │   ├── 00000.png
+        │   │   │   ├── 00001.png
+        │   │   │   └── ...
+        │   │   ├── pseudo_views/
+        │   │   │   ├── pseudo_00000.png
+        │   │   │   ├── pseudo_00000_confidence.npy
+        │   │   │   ├── pseudo_00001.png
+        │   │   │   ├── pseudo_00001_confidence.npy
+        │   │   │   └── ...
+        │   │   ├── intermediate_poses.npy
+        │   │   ├── 3dgs_retrained/
+        │   │   │   └── test/ours_30000/{renders,gt}/
+        │   │   └── metrics.json
+        │   └── reggs/ ...
         ├── re10k/ ...
-        ├── comparison_table.csv
-        ├── all_results.json
+        ├── waymo/ ...
+        ├── part3_results.csv
         └── figures/
-            ├── waymo_trajectory_compare.png
-            ├── dl3dv_trajectory_compare.png
-            └── re10k_trajectory_compare.png
+            ├── dl3dv_pseudo_comparison.png
+            ├── re10k_pseudo_comparison.png
+            └── waymo_pseudo_comparison.png
 ```
 
 ---
@@ -527,11 +586,25 @@ workplace/
 - Meaningful progress requires better pose estimators (monocular SLAM,
   feed-forward pose-free models) rather than better initialization pipelines.
 
+### Part 3
+We evaluate on DL3DV and Re10k using the InstantSplat configuration (the best-performing method from Part 2). The sparsity ratios are 1/30 for both datasets, resulting in 10–11 real frames per scene. Table 5 presents the quantitative comparison.
+
+**Table 5:** Generative enhancement results (test split, 30k iterations).
+
+| Dataset | Method | PSNR↑ | SSIM↑ | ATE (m)↓ |
+|--------|--------|-------|-------|----------|
+| DL3DV | Part 2 (InstantSplat) | 11.30 | 0.225 | 0.809 |
+| | Part 3 (w/ pseudo-views) | 9.20 | 0.136 | 0.833 |
+| Re10k | Part 2 (InstantSplat) | 9.41 | 0.220 | 1.914 |
+| | Part 3 (w/ pseudo-views) | 7.98 | 0.105 | 1.918 |
+
+Adding pseudo-views leads to consistent degradation: PSNR drops by 2.10 dB (18.6%) on DL3DV and 1.43 dB (15.2%) on Re10k. SSIM decreases significantly, while ATE remains nearly unchanged, confirming that pose estimation is not the source of the degradation.
+
 ---
 
 ## Troubleshooting
 
-### `not all poses are known`
+### Not all poses are known
 **Cause:** `compute_global_alignment(init="known_poses")` was called in Phase 2
 of the RegGS-style alignment. This mode requires externally pre-fixed pose
 tensors and does not accept MST-estimated poses.  
