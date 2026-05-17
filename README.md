@@ -466,23 +466,58 @@ workplace/output/part2_alternative/
 
 Explores whether diffusion-generated pseudo-views can improve unposed sparse reconstruction by augmenting the training set with intermediate views. This experiment builds on the optimal configuration from Part 2 (InstantSplat) and applies DIFIX3D+ — a single-step diffusion model fine-tuned for removing 3D reconstruction artifacts.
 
-### 3.1 Methodology
+### 3.1 Environment setup
+```bash
+git clone https://github.com/nv-tlabs/Difix3D.git
+cd Difix3D
+conda create -n difix
+conda activate difix
+pip install -r requirements.txt
+```
+#### Download the difix model
+Because we encountered issue when accessing the huggingface website from the server, we manually download the model on our own laptop and uploaded it to the server. The model.zip file is now available on our google drive:
 
-The pipeline consists of three sequential steps, each implemented in a separate script.
+https://drive.google.com/file/d/13XxHES4mDT1ZFPdlL__Ayd0Is9DOj9dc/view?usp=sharing
 
-#### Step 1 — Intermediate Pose Rendering (`part3_step1_render_intermediate.py`)
+Download and unzip it into a folder under this repository. Remember to modify the `LOCAL_MODEL_PATH` in `part3_step2_difix3d.py`.
+
+### 3.2 Step 1 — Intermediate Pose Rendering (`part3_step1_render_intermediate.py`)
 
 Given sparse camera poses recovered by DUSt3R in Part 2 (9–11 frames per scene), this script generates intermediate camera poses between consecutive real frames using spherical linear interpolation (SLERP) for rotation and linear interpolation for translation. For each interval between two real frames, we generate K = 2 intermediate poses, yielding approximately 18–20 pseudo-views per scene.
 
 For each interpolated pose, the script renders a novel view using the 3DGS model trained in Part 2 (InstantSplat). These renders typically contain floating artifacts, blurring, and incomplete geometry due to insufficient multi-view constraints. The rendered images are saved to `intermediate_renders/` directory.
 
-#### Step 2 — DIFIX3D+ Enhancement (`part3_step2_difix3d.py`)
+#### Usage Example
+```bash
+python step1_render_intermediate.py \
+    --workplace /data2/fjing221/workplace \
+    --dataset dl3dv \
+    --method instantsplat \
+    --num_interp 2
+```
+
+### 3.3 Step 2 — DIFIX3D+ Enhancement (`part3_step2_difix3d.py`)
 
 This script applies DIFIX3D+ [Wu et al., CVPR 2025], a single-step diffusion model built on SD-Turbo, to enhance the rendered views. For each rendered image, the model takes the degraded render and the nearest real frame as reference, and outputs an enhanced pseudo-view in a single denoising step. The enhanced images are saved to `pseudo_views/` directory with confidence scores stored as separate `.npy` files.
 
-#### Step 3 — Hybrid Training (`part3_step3_rerun.py`)
+#### Usage Example
+Please modify the `WORKSPACE` in `part3_step2_difix3d.py`.
+```bash
+python part3_step2_difix3d.py
+```
+
+### 3.4 Step 3 — Hybrid Training (`part3_step3_rerun.py`)
 
 This script concatenates the generated pseudo-views with the original real images to form an augmented training set, then re-runs the complete Part 2 pipeline (DUSt3R + 3DGS) on this augmented dataset. The output is saved to a separate directory (`part3_alternative/`) to avoid overwriting Part 2 results.
+
+#### Usage Example
+```bash
+python part3_step3_rerun.py \
+    --datasets re10k \
+    --method instantsplat \
+    --pseudo_views_dir /data2/fjing221/workplace/Difix3D/output \
+    --use_pseudo_views
+```
 
 
 ---
@@ -533,32 +568,44 @@ workplace/
     │       ├── waymo_trajectory_compare.png
     │       ├── dl3dv_trajectory_compare.png
     │       └── re10k_trajectory_compare.png
+    |
+    ├── part3_intermediate/
+    │   ├── dl3dv/
+    │   │   ├── instantsplat/
+    │   │   │   └── intermediate_renders/
+    │   │   │       ├── 00000.png
+    │   │   │       ├── 00001.png
+    │   │   │       └── ...
+    │   │   └── reggs/ ...
+    │   ├── re10k/ ...
+    │   └── waymo/ ...
     │
-    └── part3_enhanced/
+    ├── part3_enhanced/
+    │   ├── dl3dv/
+    │   │   ├── instantsplat/
+    │   │   │   └── pseudo_views/
+    │   │   │       ├── pseudo_00000.png
+    │   │   │       ├── pseudo_00000_confidence.npy
+    │   │   │       ├── pseudo_00001.png
+    │   │   │       ├── pseudo_00001_confidence.npy
+    │   │   │       └── ...
+    │   │   └── reggs/ ...
+    │   ├── re10k/ ...
+    │   └── waymo/ ...
+    │
+    └── part3_alternative/
         ├── dl3dv/
-        │   ├── instantsplat/
-        │   │   ├── intermediate_renders/
-        │   │   │   ├── 00000.png
-        │   │   │   ├── 00001.png
-        │   │   │   └── ...
-        │   │   ├── pseudo_views/
-        │   │   │   ├── pseudo_00000.png
-        │   │   │   ├── pseudo_00000_confidence.npy
-        │   │   │   ├── pseudo_00001.png
-        │   │   │   ├── pseudo_00001_confidence.npy
-        │   │   │   └── ...
-        │   │   ├── intermediate_poses.npy
-        │   │   ├── 3dgs_retrained/
-        │   │   │   └── test/ours_30000/{renders,gt}/
-        │   │   └── metrics.json
-        │   └── reggs/ ...
-        ├── re10k/ ...
-        ├── waymo/ ...
-        ├── part3_results.csv
-        └── figures/
-            ├── dl3dv_pseudo_comparison.png
-            ├── re10k_pseudo_comparison.png
-            └── waymo_pseudo_comparison.png
+        │   └── instantsplat_with_pseudo/
+        │       ├── 3dgs/
+        │       ├── images/
+        │       ├── sparse/
+        │       │   └── 0/
+        │       ├── poses_c2w.npy
+        │       └── instantsplat_metrics.json
+        ├── figures/
+        ├── re10k/
+        └── waymo/
+    
 ```
 
 ---

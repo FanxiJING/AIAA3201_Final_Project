@@ -26,7 +26,7 @@ import numpy as np
 from pathlib import Path
 from PIL import Image
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"  # 强制只用 GPU 1
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"  # Designate which gpu to use
 
 
 # ── Argument parsing ──────────────────────────────────────────────────────────
@@ -57,7 +57,7 @@ PROJECT4    = args.project4
 WORKPLACE   = args.workplace
 DATA_ROOT   = args.data_root
 WEIGHTS_DIR = f"{WORKPLACE}/weights"
-OUTPUT_ROOT = "/data3/fjing221//output/part3_alternative"
+OUTPUT_ROOT = f"{WORKPLACE}/output/part3_alternative"
 BASELINE    = f"{WORKPLACE}/output/part3_original"
 
 GS_REPO     = f"{WORKPLACE}/gaussian-splatting"

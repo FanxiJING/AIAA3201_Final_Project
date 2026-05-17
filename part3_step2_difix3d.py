@@ -11,7 +11,6 @@ import glob
 import numpy as np
 from pathlib import Path
 
-sys.path.insert(0, '/data2/fjing221/workplace/Difix3D/src')
 
 import torch
 from pipeline_difix import DifixPipeline
@@ -25,9 +24,14 @@ from PIL import Image
 DATASETS = ["dl3dv", "re10k", "waymo"]
 METHODS = ["instantsplat", "reggs"]
 
-BASE_PATH = "/data2/fjing221/workplace/output/part3_intermediate"
-REAL_IMAGES_PATH = "/data2/fjing221/workplace/output/part2_alternative"
-OUTPUT_BASE = "/data2/fjing221/workplace/output/part3_enhanced"
+# Please modify according to your need
+WORKSPACE = "/data2/fjing221/workplace"
+
+BASE_PATH = f"{WORKSPACE}/output/part3_intermediate"
+REAL_IMAGES_PATH = f"{WORKSPACE}/output/part2_alternative"
+OUTPUT_BASE = f"{WORKSPACE}/output/part3_enhanced"
+
+sys.path.insert(0, f"{WORKSPACE}/Difix3D/src")
 
 # ============================================
 # Load Difix3D Model
@@ -35,6 +39,7 @@ OUTPUT_BASE = "/data2/fjing221/workplace/output/part3_enhanced"
 
 print("Loading Difix3D model...")
 
+# Path of the local model, please modify according to your need
 LOCAL_MODEL_PATH = "/data2/fjing221/difix_ref_model"
 
 pipe = DifixPipeline.from_pretrained(
